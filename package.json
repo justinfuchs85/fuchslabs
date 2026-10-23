@@ -11,7 +11,7 @@
     "dev:cms": "npm run dev -w cms",
     "build": "npm run build -w web",
     "build:cms": "npm run build -w cms",
-    "seed": "npm run seed -w cms",
+    "seed": "npm run migrate -w cms && npm run seed -w cms",
     "check": "npm run typecheck -w cms && npm run check -w web"
   },
   "engines": {

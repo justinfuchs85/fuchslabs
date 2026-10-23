@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import { Apps } from './collections/Apps'
 import { Users } from './collections/Users'
 import { Landing } from './globals/Landing'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,5 +34,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    // Not "public": Supabase exposes public through its REST API, and this schema
+    // holds the users table. Keep Payload where the anon key can't reach it.
+    schemaName: 'payload',
+    // Schema changes ship as migrations (src/migrations) and run on boot in production.
+    migrationDir: path.resolve(dirname, 'migrations'),
+    prodMigrations: migrations,
   }),
 })
