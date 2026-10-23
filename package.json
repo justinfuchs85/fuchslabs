@@ -1,0 +1,20 @@
+{
+  "name": "fuchs-labs-site",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "cms",
+    "web"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w web",
+    "dev:cms": "npm run dev -w cms",
+    "build": "npm run build -w web",
+    "build:cms": "npm run build -w cms",
+    "seed": "npm run seed -w cms",
+    "check": "npm run typecheck -w cms && npm run check -w web"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

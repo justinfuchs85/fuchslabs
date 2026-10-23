@@ -1,0 +1,148 @@
+---
+import type { SiteApp } from '../lib/payload'
+import { PLATFORM_LABEL, STATUS_LABEL } from '../lib/glyphs'
+import AppIcon from './AppIcon.astro'
+
+interface Props {
+  app: SiteApp
+  index: number
+}
+const { app, index } = Astro.props
+const num = String(index + 1).padStart(2, '0')
+---
+
+<article class="card" id={app.slug} style={`--app: ${app.iconColor}`}>
+  <div class="card-top">
+    <AppIcon glyph={app.glyph} color={app.iconColor} size={72} class="card-icon" />
+    <span class:list={['status', `status--${app.status}`]}>{STATUS_LABEL[app.status]}</span>
+  </div>
+  <h3>{app.name}</h3>
+  <p class="tagline">{app.tagline}</p>
+  <p class="desc">{app.description}</p>
+  <div class="card-foot">
+    <span class="meta fl-num">{num} · {app.platforms.map((p) => PLATFORM_LABEL[p]).join(' + ')}</span>
+    {
+      app.url && (
+        <a class="open" href={app.url} rel="noopener">
+          Open {app.name}
+          <span aria-hidden="true">→</span>
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 28px;
+    border-radius: var(--fl-radius-xl);
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    transition:
+      transform var(--fl-dur) var(--fl-ease),
+      border-color var(--fl-dur) var(--fl-ease);
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--fl-ember) 45%, transparent);
+  }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .card-icon {
+    border-radius: 16px;
+    box-shadow:
+      0 0 0 1px var(--card-line),
+      0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  }
+  h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .tagline {
+    font-weight: 600;
+    color: var(--on-ink);
+  }
+  .desc {
+    color: var(--on-ink-muted);
+    flex: 1;
+  }
+  .card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--card-line);
+  }
+  .meta {
+    font-size: 0.78rem;
+    color: var(--on-ink-muted);
+    letter-spacing: 0.02em;
+  }
+  .open {
+    color: var(--on-ink);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    gap: 6px;
+  }
+  .open:hover span {
+    transform: translateX(3px);
+  }
+  .open span {
+    color: var(--fl-ember);
+    transition: transform var(--fl-dur) var(--fl-ease);
+  }
+  .status {
+    font: 600 0.72rem/1 var(--fl-font-num);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 7px 10px;
+    border-radius: var(--fl-radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .status::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .status--live {
+    color: var(--fl-ember);
+    background: var(--fl-ember-soft);
+  }
+  .status--beta {
+    color: var(--on-ink);
+    border: 1px solid var(--card-line);
+  }
+  .status--building {
+    color: var(--on-ink-muted);
+    border: 1px dashed var(--card-line);
+  }
+  .status--building::before {
+    background: transparent;
+    border: 1.5px solid currentColor;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .open span {
+      transition: none;
+    }
+    .card:hover {
+      transform: none;
+    }
+  }
+</style>

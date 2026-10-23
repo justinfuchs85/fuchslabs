@@ -1,0 +1,31 @@
+---
+import type { AppGlyph } from '../../../content/landing'
+import { GLYPHS } from '../lib/glyphs'
+
+interface Props {
+  glyph: AppGlyph
+  color: string
+  size?: number
+  class?: string
+}
+const { glyph, color, size = 88, class: className } = Astro.props
+const g = GLYPHS[glyph]
+const [cx, cy, r] = g.dot
+---
+
+<svg class={className} width={size} height={size} viewBox="0 0 1024 1024" aria-hidden="true">
+  <rect width="1024" height="1024" rx="224" fill={color}></rect>
+  {
+    g.lines.map((d) => (
+      <path
+        d={d}
+        fill="none"
+        stroke="#F4EFE6"
+        stroke-width="52"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    ))
+  }
+  <circle cx={cx} cy={cy} r={r} fill="#E8724A"></circle>
+</svg>

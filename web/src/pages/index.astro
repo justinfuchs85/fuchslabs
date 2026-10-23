@@ -1,0 +1,499 @@
+---
+import AppCard from '../components/AppCard.astro'
+import AppIcon from '../components/AppIcon.astro'
+import Mark from '../components/Mark.astro'
+import Base from '../layouts/Base.astro'
+import { emphasize, getSiteContent } from '../lib/payload'
+
+const { landing, apps } = await getSiteContent()
+const { hero, appsSection, principles, about, contact, seo } = landing
+const live = apps.filter((a) => a.status === 'live').length
+const pad = (n: number) => String(n).padStart(2, '0')
+const year = new Date().getFullYear()
+const deskApps = apps.slice(0, 4)
+---
+
+<Base title={seo.title} description={seo.description}>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="#" aria-label="Fuchs Labs, home">
+        <Mark size={26} class="brand-mark" />
+        <span>Fuchs Labs</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#apps">Apps</a>
+        <a href="#principles">How it works</a>
+        <a href="#about">About</a>
+        <a class="nav-cta" href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">{hero.eyebrow}</p>
+          <h1 set:html={emphasize(hero.heading)} />
+          <p class="lede">{hero.subheading}</p>
+          <div class="actions">
+            <a class="btn btn--primary" href={hero.primaryCta.href}>
+              {hero.primaryCta.label}
+              <span aria-hidden="true">↓</span>
+            </a>
+            <a class="btn btn--ghost" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</a>
+          </div>
+          <dl class="stats fl-num">
+            <div><dt>Apps</dt><dd>{pad(apps.length)}</dd></div>
+            <div><dt>Live</dt><dd>{pad(live)}</dd></div>
+            <div><dt>Ads</dt><dd>00</dd></div>
+          </dl>
+        </div>
+
+        <div class="desk" aria-hidden="true">
+          {
+            deskApps.map((app, i) => (
+              <a href={`#${app.slug}`} class={`desk-icon desk-icon--${i}`} tabindex="-1">
+                <AppIcon glyph={app.glyph} color={app.iconColor} size={168} />
+                <span>{app.name}</span>
+              </a>
+            ))
+          }
+          <Mark size={46} class="desk-mark" />
+        </div>
+      </div>
+    </section>
+
+    <section class="apps" id="apps">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">{pad(apps.length)} apps · one studio</p>
+          <h2>{appsSection.heading}</h2>
+          {appsSection.intro && <p class="section-intro">{appsSection.intro}</p>}
+        </div>
+        <div class="app-grid">
+          {apps.map((app, i) => <AppCard app={app} index={i} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="principles" id="principles">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">The rules</p>
+          <h2>{principles.heading}</h2>
+        </div>
+        <ol class="principle-list">
+          {
+            principles.items.map((p, i) => (
+              <li>
+                <span class="p-num fl-num">{pad(i + 1)}</span>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="wrap about-grid">
+        <div class="about-mark" aria-hidden="true">
+          <Mark size={200} />
+        </div>
+        <div>
+          <p class="eyebrow">About</p>
+          <h2>{about.heading}</h2>
+          {about.body.split(/\n{2,}/).map((para) => <p class="about-body">{para}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <div class="contact-card">
+          <h2>{contact.heading}</h2>
+          {contact.body && <p>{contact.body}</p>}
+          <a class="btn btn--primary" href={`mailto:${contact.email}`}>
+            {contact.email}
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <a class="fl-signature" href="#">
+        <Mark size={18} class="sig-mark" />
+        Made by Fuchs Labs
+      </a>
+      <p class="fl-num">© {year} Fuchs Labs · Built with Astro + Payload</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  /* Header */
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+  }
+  .top-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    gap: 16px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .brand :global(.brand-mark) {
+    color: var(--fl-ember);
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2.5vw, 28px);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  nav a {
+    text-decoration: none;
+    color: var(--muted);
+    transition: color var(--fl-dur) var(--fl-ease);
+  }
+  nav a:hover {
+    color: var(--fg);
+  }
+  nav .nav-cta {
+    color: var(--fg);
+    padding: 9px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--fl-radius-pill);
+  }
+  @media (max-width: 640px) {
+    nav a:not(.nav-cta) {
+      display: none;
+    }
+  }
+
+  /* Hero */
+  .hero {
+    padding: clamp(40px, 8vw, 96px) 0 clamp(64px, 9vw, 120px);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+  .hero-copy {
+    display: grid;
+    gap: 24px;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 6.4vw, 5.4rem);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+  }
+  h1 :global(em) {
+    font-style: italic;
+    font-weight: 800;
+  }
+  .lede {
+    font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+    color: var(--muted);
+    max-width: 34ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .stats {
+    display: flex;
+    gap: 0;
+    margin-top: 8px;
+    border-top: 1px solid var(--line);
+    width: fit-content;
+  }
+  .stats div {
+    padding: 16px 28px 0 0;
+    margin-right: 28px;
+    border-right: 1px solid var(--line);
+  }
+  .stats div:last-child {
+    border-right: 0;
+    margin-right: 0;
+  }
+  .stats dt {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .stats dd {
+    font-size: 1.9rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  /* The desk: app icons scattered like they were just set down */
+  .desk {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 40px;
+    background:
+      radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 22px 22px,
+      var(--surface);
+    border: 1px solid var(--line);
+  }
+  .desk-icon {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    width: 30%;
+    text-decoration: none;
+    font: 600 0.75rem/1 var(--fl-font-num);
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    transition: transform 400ms var(--fl-ease);
+  }
+  .desk-icon :global(svg) {
+    width: 100%;
+    height: auto;
+    border-radius: 22%;
+    box-shadow: 0 24px 40px -22px rgba(27, 34, 50, 0.55);
+  }
+  .desk-icon--0 { top: 9%; left: 10%; transform: rotate(-7deg); }
+  .desk-icon--1 { top: 6%; right: 10%; transform: rotate(5deg); }
+  .desk-icon--2 { bottom: 8%; left: 13%; transform: rotate(4deg); }
+  .desk-icon--3 { bottom: 5%; right: 9%; transform: rotate(-4deg); }
+  .desk:hover .desk-icon { transform: rotate(0deg) translateY(-4px); }
+  .desk :global(.desk-mark) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    color: var(--fl-ember);
+  }
+
+  @media (max-width: 860px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .desk {
+      max-width: 440px;
+      width: 100%;
+      justify-self: center;
+    }
+  }
+
+  /* Apps */
+  .apps {
+    background: var(--ink-section);
+    color: var(--on-ink);
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .apps .eyebrow,
+  .apps .section-intro {
+    color: var(--on-ink-muted);
+  }
+  .section-intro {
+    font-size: 1.1rem;
+  }
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  @media (max-width: 760px) {
+    .app-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Principles */
+  .principles {
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .principle-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0;
+    border-top: 1.5px solid var(--fg);
+  }
+  .principle-list li {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 28px 28px 8px 0;
+  }
+  .principle-list li + li {
+    padding-left: 28px;
+    border-left: 1px solid var(--line);
+  }
+  @media (max-width: 780px) {
+    .principle-list li + li {
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+  }
+  .p-num {
+    color: var(--fl-ember);
+    font-size: 0.9rem;
+  }
+  .principle-list h3 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .principle-list p {
+    color: var(--muted);
+  }
+
+  /* About */
+  .about {
+    padding: 0 0 clamp(64px, 9vw, 120px);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 88px);
+    align-items: center;
+  }
+  .about-grid > div:last-child {
+    display: grid;
+    gap: 16px;
+    max-width: 620px;
+  }
+  .about h2 {
+    font-size: clamp(2rem, 4.5vw, 3.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .about-body {
+    font-size: 1.15rem;
+    color: var(--muted);
+  }
+  .about-mark {
+    color: var(--fg);
+    padding: 36px;
+    border-radius: 40px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .about-mark :global(svg) {
+    width: clamp(120px, 18vw, 200px);
+    height: auto;
+  }
+  @media (max-width: 700px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .about-mark {
+      justify-self: start;
+      padding: 24px;
+    }
+  }
+
+  /* Contact */
+  .contact {
+    padding-bottom: clamp(48px, 7vw, 96px);
+  }
+  .contact-card {
+    display: grid;
+    justify-items: start;
+    gap: 20px;
+    padding: clamp(32px, 6vw, 72px);
+    border-radius: 40px;
+    background: var(--ink-section);
+    color: var(--on-ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-card::after {
+    content: '';
+    position: absolute;
+    width: 340px;
+    height: 340px;
+    right: -120px;
+    bottom: -160px;
+    border-radius: 50%;
+    background: var(--fl-ember);
+    opacity: 0.9;
+  }
+  .contact-card > * {
+    position: relative;
+    z-index: 1;
+  }
+  .contact-card h2 {
+    font-size: clamp(1.9rem, 4.2vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    max-width: 20ch;
+  }
+  .contact-card p {
+    color: var(--on-ink-muted);
+    max-width: 52ch;
+  }
+  .contact-card .btn {
+    word-break: break-all;
+  }
+  @media (max-width: 640px) {
+    .contact-card {
+      padding-bottom: 120px;
+    }
+    .contact-card::after {
+      width: 220px;
+      height: 220px;
+      right: -70px;
+      bottom: -130px;
+    }
+  }
+
+  /* Footer */
+  .foot {
+    border-top: 1px solid var(--line);
+    padding: 28px 0 40px;
+    color: var(--muted);
+  }
+  .foot-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+  }
+  .foot :global(.sig-mark) {
+    color: var(--fl-ember);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desk-icon {
+      transition: none;
+    }
+    .desk:hover .desk-icon {
+      transform: none;
+    }
+  }
+</style>

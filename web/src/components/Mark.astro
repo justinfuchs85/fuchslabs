@@ -1,0 +1,23 @@
+---
+/** The Fuchs Labs fox: two interlocking strokes, shared with Fox Consulting Group. */
+interface Props {
+  size?: number
+  class?: string
+  label?: string
+}
+const { size = 28, class: className, label } = Astro.props
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <path
+    d="M10.5 1.7 0 37.7l10.1 7.8 39.3-31.3 6.1 21.2-23.1 17.8-10.8-7.7-5.6 4.5 15.9 12.2L64 37.8 53.6 1.7 9.9 36.5l-1.4-1.1 6.2-21.3 6 4.7 5.7-4.4Z"
+    fill="currentColor"></path>
+</svg>

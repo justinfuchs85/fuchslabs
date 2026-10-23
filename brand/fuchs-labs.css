@@ -1,0 +1,65 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Fuchs Labs: shared fingerprints for every app in the family.
+
+   This file is deliberately small. It does NOT restyle an app; each app keeps its
+   own palette, layout, and display font. It adds the handful of things that make
+   the apps recognizable as siblings:
+
+     1. Ember (#E8724A) as the studio's signal color: focus rings, text selection,
+        the dot in every app icon, and the "Made by Fuchs Labs" mark.
+     2. Figtree for interface text, JetBrains Mono (tabular) for numbers.
+     3. One radius scale, one easing curve.
+     4. The studio signature component (.fl-signature).
+
+   Load Figtree + JetBrains Mono in the app (Google Fonts or next/font), then
+   import this file once, after the app's own base styles.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --fl-ember: #E8724A;
+  --fl-ember-soft: rgba(232, 114, 74, 0.16);
+  --fl-ink: #1B2232;
+  --fl-paper: #F4EFE6;
+
+  --fl-font-ui: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fl-font-num: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --fl-radius-sm: 8px;
+  --fl-radius-md: 12px;
+  --fl-radius-lg: 16px;
+  --fl-radius-xl: 24px;
+  --fl-radius-pill: 999px;
+
+  --fl-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fl-dur: 180ms;
+}
+
+/* 1. Ember focus ring and selection, in every app */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--fl-ember);
+  outline-offset: 2px;
+}
+::selection { background: var(--fl-ember-soft); }
+
+/* 2. Numbers line up and read as data */
+.fl-num { font-family: var(--fl-font-num); font-variant-numeric: tabular-nums; }
+
+/* 4. Studio signature: <a class="fl-signature">[mark svg] Made by Fuchs Labs</a> */
+.fl-signature {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 12px/1 var(--fl-font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: inherit;
+  opacity: 0.6;
+  text-decoration: none;
+  transition: opacity var(--fl-dur) var(--fl-ease);
+}
+.fl-signature:hover { opacity: 0.9; }
+.fl-signature svg { width: 18px; height: 18px; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-signature { transition: none; }
+}
